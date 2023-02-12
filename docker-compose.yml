@@ -3,6 +3,7 @@
 services:
 
   flask:
+    image: eduardgrinberg/firewave-poc-be_flask
     build: ./flaskApp
     container_name: flask
     restart: always
@@ -12,6 +13,7 @@ services:
       - 8080
 
   nginx:
+    image: eduardgrinberg/firewave-poc-be_nginx
     build: ./nginx
     container_name: nginx
     restart: always
