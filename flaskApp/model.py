@@ -72,3 +72,5 @@ class Model(nn.Module):
         model = Model()
         model.load_state_dict(torch.load(file_path))
         model.eval()
+
+        return model
