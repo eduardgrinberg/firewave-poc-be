@@ -5,6 +5,7 @@ import torch
 
 from pathlib import Path
 from flask import Flask, request
+from torchsummary import summary
 
 from model import Model
 from audioUtils import AudioUtil
@@ -13,6 +14,8 @@ from soundClass import SoundClass
 response = requests.get('https://firewave-models.s3.eu-central-1.amazonaws.com/model.pt')
 open(Path.cwd() / 'model.pt', 'wb').write(response.content)
 model = Model.load_from_file(Path.cwd() / 'model.pt')
+
+summary(model, input_size=(2, 64, 126))
 
 app = Flask(__name__)
 
