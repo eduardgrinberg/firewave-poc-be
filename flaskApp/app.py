@@ -27,11 +27,11 @@ def index():
 @app.post('/upload')
 def upload():
     file = request.files['file_data']
-    with wave.open('tmp.wav', 'wb') as wavfile:
+    with wave.open('data/tmp.wav', 'wb') as wavfile:
         wavfile.setparams((1, 2, 16000, 0, 'NONE', 'NONE'))
         waveform = file.stream.read()
         wavfile.writeframes(waveform)
-    aud = AudioUtil.open('tmp.wav')
+    aud = AudioUtil.open('data/tmp.wav')
     reaud = AudioUtil.resample(aud, 16000)
     rechan = AudioUtil.rechannel(reaud, 2)
     dur_aud = AudioUtil.pad_trunc(rechan, 4000)
