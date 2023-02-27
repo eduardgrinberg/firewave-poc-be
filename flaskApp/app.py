@@ -36,12 +36,14 @@ def upload():
     rechan = AudioUtil.rechannel(reaud, 2)
     dur_aud = AudioUtil.pad_trunc(rechan, 4000)
 
+    
     spectro_gram = AudioUtil.spectro_gram(dur_aud)
     inputs = spectro_gram[np.newaxis, ...]
     inputs_m, inputs_s = inputs.mean(), inputs.std()
     inputs = (inputs - inputs_m) / inputs_s
     with torch.no_grad():
         outputs = model(inputs)
+    print(f'Output: {outputs}')
     _, prediction = torch.max(outputs, 1)
     print(prediction)
     return SoundClass(prediction.item()).name
