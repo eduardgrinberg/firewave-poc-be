@@ -1,12 +1,14 @@
 #!/bin/bash
 
+echo 'Running move-files'
+
 while true
 do
-    dirlist=`ls data/archive`
+    dirlist=$(ls /home/ec2-user/data/archive/)
     for file in $dirlist
     do
-        aws s3 cp data/archive/$file s3://firewave-recordings
-        rm data/archive/$file
+        aws s3 cp /home/ec2-user/data/archive/$file s3://firewave-recordings
+        rm /home/ec2-user/data/archive/$file
     done
-    sleep 10000
+    sleep 10
 done

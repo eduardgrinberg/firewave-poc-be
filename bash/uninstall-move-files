@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo 'remove move-files service'
+
+cd /home/ec2-user/source/bash/
+sudo systemctl stop move-files.service
+sudo systemctl disable move-files.service
+rm /etc/systemd/system/move-files.service
+rm /etc/systemd/system/move-files.service # and symlinks that might be related
+rm /usr/lib/systemd/system/move-files.service
+rm /usr/lib/systemd/system/move-files.service # and symlinks that might be related
+systemctl daemon-reload
+systemctl reset-failed
