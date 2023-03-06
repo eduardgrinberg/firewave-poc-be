@@ -1,0 +1,8 @@
+[Unit]
+Description=Upload Recordings To S3
+
+[Service]
+ExecStart=/home/ec2-user/source/bash/move-files
+
+[Install]
+WantedBy=multi-user.target

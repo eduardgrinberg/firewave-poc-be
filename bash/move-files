@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while true
+do
+    dirlist=`ls data/archive`
+    for file in $dirlist
+    do
+        aws s3 cp data/archive/$file s3://firewave-recordings
+        rm data/archive/$file
+    done
+    sleep 10000
+done
