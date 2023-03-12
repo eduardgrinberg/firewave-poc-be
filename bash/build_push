@@ -1,0 +1,2 @@
+rm flaskApp/requirements.txt
+pip freeze | grep -v soundfile > flaskApp/requirements.txt

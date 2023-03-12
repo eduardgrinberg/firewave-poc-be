@@ -23,9 +23,18 @@ summary(model, input_size=(2, 64, 126))
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return 'It Works!!!'
+
+
+def binary_prediction(output):
+    fire_predictions = output[:, 1]
+    predictions = torch.zeros(fire_predictions.shape[0], dtype=torch.int)
+    predictions[fire_predictions > 0] = 1
+
+    return predictions
 
 
 @app.post('/upload')
@@ -41,7 +50,6 @@ def upload():
     rechan = AudioUtil.rechannel(reaud, 2)
     dur_aud = AudioUtil.pad_trunc(rechan, 4000)
 
-
     spectro_gram = AudioUtil.spectro_gram(dur_aud)
     inputs = spectro_gram[np.newaxis, ...]
     inputs_m, inputs_s = inputs.mean(), inputs.std()
@@ -49,7 +57,7 @@ def upload():
     with torch.no_grad():
         outputs = model(inputs)
     print(f'Output: {outputs}')
-    _, prediction = torch.max(outputs, 1)
+    prediction = binary_prediction(outputs)
     print(prediction.data[0])
     os.renames(tmp_file_name, f'data/archive/rec_{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav')
     return SoundClass(prediction.item()).name

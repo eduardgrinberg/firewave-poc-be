@@ -1,24 +1,12 @@
 #!/bin/bash
 
-# remove containers
+echo 'remove containers'
 
 docker stop flask
 docker stop nginx
 docker system prune -af
 
-# remove move-files service
-
-cd /home/ec2-user/source/bash/
-sudo systemctl stop move-files.service
-sudo systemctl disable move-files.service
-rm /etc/systemd/system/move-files.service
-rm /etc/systemd/system/move-files.service # and symlinks that might be related
-rm /usr/lib/systemd/system/move-files.service
-rm /usr/lib/systemd/system/move-files.service # and symlinks that might be related
-systemctl daemon-reload
-systemctl reset-failed
-
-# clone code, build images and run containers
+echo 'clone code, build images and run containers'
 
 cd /home/ec2-user/
 rm -rf source
@@ -26,13 +14,13 @@ git clone https://github.com/eduardgrinberg/firewave-poc-be.git source
 docker image build -t nginx:latest source/nginx
 docker image build -t flask:latest source/flaskApp
 docker network create -d bridge firewave-poc-be-nt
-docker run -d --net firewave-poc-be-nt --restart always -v $(pwd)/data:/app/data --name flask flask:latest
+docker run -d --net firewave-poc-be-nt --restart always -v /home/ec2-user/data:/app/data --name flask flask:latest
 docker run -d --net firewave-poc-be-nt --restart always --name nginx -p 5000:80 nginx:latest
 
-# install and run move-files.service
+echo 're-install and run move-files.service'
 
 cd /home/ec2-user/source/bash/
+sudo chmod +x re-install-move-files
+sudo chmod +x move-files
 
-sudo systemctl enable move-files.service
-sudo systemctl start move-files.service
-sudo systemctl status move-files.service
+sudo ./re-install-move-files
