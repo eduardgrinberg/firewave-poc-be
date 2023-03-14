@@ -1,25 +1,24 @@
 import os
 import random
 import wave
+from pathlib import Path
 from time import time
 
 import numpy as np
 import requests as requests
 import torch
-
-from pathlib import Path
 from flask import Flask, request
 from torchsummary import summary
 
-from model import Model
 from audioUtils import AudioUtil
+from model import Model
 from soundClass import SoundClass
 
 response = requests.get('https://firewave-models.s3.eu-central-1.amazonaws.com/model.pt')
 open(Path.cwd() / 'model.pt', 'wb').write(response.content)
 model = Model.load_from_file(Path.cwd() / 'model.pt')
 
-summary(model, input_size=(2, 64, 126))
+summary(model, input_size=(1, 64, 126))
 
 app = Flask(__name__)
 
@@ -46,9 +45,7 @@ def upload():
         waveform = file.stream.read()
         wavfile.writeframes(waveform)
     aud = AudioUtil.open(tmp_file_name)
-    reaud = AudioUtil.resample(aud, 16000)
-    rechan = AudioUtil.rechannel(reaud, 2)
-    dur_aud = AudioUtil.pad_trunc(rechan, 4000)
+    dur_aud = AudioUtil.pad_trunc(aud, 4000)
 
     spectro_gram = AudioUtil.spectro_gram(dur_aud)
     inputs = spectro_gram[np.newaxis, ...]
