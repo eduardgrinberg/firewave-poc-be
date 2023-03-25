@@ -7,7 +7,7 @@ from time import time
 import numpy as np
 import requests as requests
 import torch
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from torchsummary import summary
 
 from audioUtils import AudioUtil
@@ -56,8 +56,20 @@ def upload():
     print(f'Output: {outputs}')
     prediction = binary_prediction(outputs)
     print(prediction.data[0])
-    os.renames(tmp_file_name, f'data/archive/rec_{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav')
-    return SoundClass(prediction.item()).name
+    file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
+    os.renames(tmp_file_name, f'data/archive/{file_name}')
 
-# if __name__ == "__main__":
-#     app.run()
+    return jsonify({
+        'fileName': file_name,
+        'prediction': prediction.item() == SoundClass.FIRE_ALARM
+    })
+
+
+@app.post('/feedback')
+def feedback():
+    request_data = request.get_json()
+    file_name = request_data['fileName']
+    is_signal = request_data['isSignal']
+    class_prefix = 'fire' if is_signal == 1 else 'bg'
+    os.renames(f'data/archive/{file_name}', f'data/feedback/{class_prefix}_{file_name}')
+    return 'OK'

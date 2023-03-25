@@ -2,13 +2,24 @@
 
 echo 'Running move-files'
 
-while true
-do
-    dirlist=$(ls /home/ec2-user/data/archive/)
-    for file in $dirlist
-    do
-        aws s3 cp /home/ec2-user/data/archive/$file s3://firewave-recordings
-        rm /home/ec2-user/data/archive/$file
-    done
-    sleep 10
+while true; do
+  archiveLs=$(ls /home/ec2-user/data/archive/)
+  for file in $archiveLs; do
+    fullFilePath=/home/ec2-user/data/archive/$file
+    if [[ $(stat -c %Y "$fullFilePath") -gt $(($(date +%s) - 60)) ]]; then
+      aws s3 cp "$fullFilePath" s3://firewave-recordings
+      rm "$fullFilePath"
+    fi
+  done
+
+  feedbackLs=$(ls /home/ec2-user/data/feedback/)
+  for file in $feedbackLs; do
+    fullFilePath=/home/ec2-user/data/feedback/$file
+    if [[ $(stat -c %Y "$fullFilePath") -gt $(($(date +%s) - 60)) ]]; then
+      aws s3 cp "$fullFilePath" s3://firewave-feedback
+      rm "$fullFilePath"
+    fi
+  done
+
+  sleep 10
 done
