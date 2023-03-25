@@ -61,7 +61,7 @@ def upload():
 
     return jsonify({
         'fileName': file_name,
-        'prediction': prediction.item() == SoundClass.FIRE_ALARM
+        'prediction': prediction.item() == 1
     })
 
 
