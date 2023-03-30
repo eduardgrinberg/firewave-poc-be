@@ -6,7 +6,7 @@ while true; do
   archiveLs=$(ls /home/ec2-user/data/archive/)
   for file in $archiveLs; do
     fullFilePath=/home/ec2-user/data/archive/$file
-    if [[ $(stat -c %Y "$fullFilePath") -gt $(($(date +%s) - 60)) ]]; then
+    if [ $(find "$fullFilePath" -mmin +1) ]; then
       aws s3 cp "$fullFilePath" s3://firewave-recordings
       rm "$fullFilePath"
     fi
@@ -15,7 +15,7 @@ while true; do
   feedbackLs=$(ls /home/ec2-user/data/feedback/)
   for file in $feedbackLs; do
     fullFilePath=/home/ec2-user/data/feedback/$file
-    if [[ $(stat -c %Y "$fullFilePath") -gt $(($(date +%s) - 60)) ]]; then
+    if [ $(find "$fullFilePath" -mmin +1) ]; then
       aws s3 cp "$fullFilePath" s3://firewave-feedback
       rm "$fullFilePath"
     fi

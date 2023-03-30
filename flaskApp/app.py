@@ -69,7 +69,7 @@ def upload():
 def feedback():
     request_data = request.get_json()
     file_name = request_data['fileName']
-    is_signal = request_data['isSignal']
-    class_prefix = 'fire' if is_signal == 1 else 'bg'
+    correct_prediction = request_data['correctPrediction']
+    class_prefix = 'fire' if correct_prediction else 'bg'
     os.renames(f'data/archive/{file_name}', f'data/feedback/{class_prefix}_{file_name}')
     return 'OK'
