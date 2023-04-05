@@ -28,10 +28,10 @@ def index():
     return 'It Works!!!'
 
 
-def binary_prediction(output):
-    fire_predictions = output[:, 1]
-    predictions = torch.zeros(fire_predictions.shape[0], dtype=torch.int)
-    predictions[fire_predictions > 0] = 1
+def binary_prediction(output, threshold):
+    # fire_predictions = output[:,1]
+    predictions = torch.zeros(output.shape[0], dtype=int)
+    predictions[output > threshold] = 1
 
     return predictions
 
@@ -52,16 +52,17 @@ def upload():
     inputs_m, inputs_s = inputs.mean(), inputs.std()
     inputs = (inputs - inputs_m) / inputs_s
     with torch.no_grad():
-        outputs = model(inputs)
+        outputs = model(inputs).squeeze(dim=0)
     print(f'Output: {outputs}')
-    prediction = binary_prediction(outputs)
+    prediction = binary_prediction(outputs, 0.8)
     print(prediction.data[0])
     file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
     return jsonify({
         'fileName': file_name,
-        'prediction': prediction.item() == 1
+        'prediction': prediction.item() == 1,
+        'score': outputs.item()
     })
 
 
