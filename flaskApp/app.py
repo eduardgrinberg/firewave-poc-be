@@ -11,6 +11,7 @@ from flask import Flask, request, jsonify
 from torchsummary import summary
 
 from audioUtils import AudioUtil
+from flaskApp.settings import Settings
 from model import Model
 from soundClass import SoundClass
 
@@ -54,7 +55,7 @@ def upload():
     with torch.no_grad():
         outputs = model(inputs).squeeze(dim=0)
     print(f'Output: {outputs}')
-    prediction = binary_prediction(outputs, 0.8)
+    prediction = binary_prediction(outputs, Settings.threshold)
     print(prediction.data[0])
     file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
     os.renames(tmp_file_name, f'data/archive/{file_name}')
