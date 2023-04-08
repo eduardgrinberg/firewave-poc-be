@@ -11,7 +11,7 @@ from flask import Flask, request, jsonify
 from torchsummary import summary
 
 from audioUtils import AudioUtil
-from flaskApp.settings import Settings
+from settings import Settings
 from model import Model
 from soundClass import SoundClass
 
@@ -30,11 +30,7 @@ def index():
 
 
 def binary_prediction(output, threshold):
-    # fire_predictions = output[:,1]
-    predictions = torch.zeros(output.shape[0], dtype=int)
-    predictions[output > threshold] = 1
-
-    return predictions
+    return output > threshold
 
 
 @app.post('/upload')
