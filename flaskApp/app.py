@@ -11,12 +11,11 @@ from flask import Flask, request, jsonify
 from torchsummary import summary
 
 from audioUtils import AudioUtil
-from settings import Settings
 from model import Model
-from soundClass import SoundClass
+from settings import Settings
 
-response = requests.get('https://firewave-models.s3.eu-central-1.amazonaws.com/model.pt')
-open(Path.cwd() / 'model.pt', 'wb').write(response.content)
+# response = requests.get('https://firewave-models.s3.eu-central-1.amazonaws.com/model.pt')
+# open(Path.cwd() / 'model.pt', 'wb').write(response.content)
 model = Model.load_from_file(Path.cwd() / 'model.pt')
 
 summary(model, input_size=(1, 64, 126))
@@ -38,7 +37,7 @@ def upload():
     file = request.files['file_data']
     tmp_file_name = f'data/{time()}_{random.randint(10000, 99999)}.wav'
     with wave.open(tmp_file_name, 'wb') as wavfile:
-        wavfile.setparams((1, 2, 16000, 0, 'NONE', 'NONE'))
+        wavfile.setparams((1, Settings.bytes_per_sample, Settings.sample_rate, 0, 'NONE', 'NONE'))
         waveform = file.stream.read()
         wavfile.writeframes(waveform)
     aud = AudioUtil.open(tmp_file_name)
