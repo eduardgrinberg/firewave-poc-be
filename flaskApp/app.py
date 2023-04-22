@@ -57,6 +57,7 @@ def upload():
     file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
+    global lastStatus
     lastStatus = prediction.item() == 1
 
     return jsonify({
@@ -75,6 +76,8 @@ def feedback():
     os.renames(f'data/archive/{file_name}', f'data/feedback/{class_prefix}_{file_name}')
     return 'OK'
 
+
 @app.get('/status')
 def status():
+    global lastStatus
     return str(lastStatus)
