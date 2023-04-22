@@ -59,6 +59,7 @@ def upload():
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
     lastStatus = prediction.item() == 1
+    print(f'Set lastStatus to {lastStatus}');
 
     return jsonify({
         'fileName': file_name,
