@@ -36,6 +36,7 @@ def binary_prediction(output, threshold):
 
 @app.post('/upload')
 def upload():
+    global lastStatus
     file = request.files['file_data']
     tmp_file_name = f'data/{time()}_{random.randint(10000, 99999)}.wav'
     with wave.open(tmp_file_name, 'wb') as wavfile:
@@ -57,7 +58,6 @@ def upload():
     file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
-    global lastStatus
     lastStatus = prediction.item() == 1
 
     return jsonify({
