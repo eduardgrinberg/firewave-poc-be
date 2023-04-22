@@ -79,5 +79,4 @@ def feedback():
 
 @app.get('/status')
 def status():
-    global lastStatus
     return str(lastStatus)
