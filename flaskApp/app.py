@@ -22,6 +22,8 @@ summary(model, input_size=(1, 64, 126))
 
 app = Flask(__name__)
 
+lastStatus = False
+
 
 @app.route('/')
 def index():
@@ -55,6 +57,8 @@ def upload():
     file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
+    lastStatus = prediction.item() == 1
+
     return jsonify({
         'fileName': file_name,
         'prediction': prediction.item() == 1,
@@ -70,3 +74,7 @@ def feedback():
     class_prefix = 'fire' if correct_prediction else 'bg'
     os.renames(f'data/archive/{file_name}', f'data/feedback/{class_prefix}_{file_name}')
     return 'OK'
+
+@app.get('/status')
+def status():
+    return str(lastStatus)
