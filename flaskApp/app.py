@@ -37,6 +37,7 @@ def binary_prediction(output, threshold):
 @app.post('/upload')
 def upload():
     global lastStatus
+    device_id = request.form.get('device_id')
     file = request.files['file_data']
     tmp_file_name = f'data/{time()}_{random.randint(10000, 99999)}.wav'
     with wave.open(tmp_file_name, 'wb') as wavfile:
@@ -52,10 +53,10 @@ def upload():
     inputs = (inputs - inputs_m) / inputs_s
     with torch.no_grad():
         outputs = model(inputs).squeeze(dim=0)
-    print(f'Output: {outputs}')
+    print(f'Output: {outputs.item()}')
     prediction = binary_prediction(outputs, Settings.threshold)
-    print(prediction.data[0])
-    file_name = f'{time()}__{random.randint(10000, 99999)}_{prediction.data[0]}.wav'
+    file_name = f'{device_id}_{time()}_{prediction.data[0]}_{outputs.item()}.wav'
+    print(f'Writeing down file: {file_name}')
     os.renames(tmp_file_name, f'data/archive/{file_name}')
 
     lastStatus = prediction.item() == 1
