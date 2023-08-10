@@ -7,19 +7,19 @@ while true; do
   for file in $archiveLs; do
     fullFilePath=/home/ec2-user/data/archive/$file
     if [ $(find "$fullFilePath" -mmin +1) ]; then
-      aws s3 cp "$fullFilePath" s3://firewave-recordings
+      aws s3 cp "$fullFilePath" s3://device-recordings-433628821879
       rm "$fullFilePath"
     fi
   done
 
-  feedbackLs=$(ls /home/ec2-user/data/feedback/)
-  for file in $feedbackLs; do
-    fullFilePath=/home/ec2-user/data/feedback/$file
-    if [ $(find "$fullFilePath" -mmin +1) ]; then
-      aws s3 cp "$fullFilePath" s3://firewave-feedback
-      rm "$fullFilePath"
-    fi
-  done
+#  feedbackLs=$(ls /home/ec2-user/data/feedback/)
+#  for file in $feedbackLs; do
+#    fullFilePath=/home/ec2-user/data/feedback/$file
+#    if [ $(find "$fullFilePath" -mmin +1) ]; then
+#      aws s3 cp "$fullFilePath" s3://firewave-feedback
+#      rm "$fullFilePath"
+#    fi
+#  done
 
   sleep 10
 done
